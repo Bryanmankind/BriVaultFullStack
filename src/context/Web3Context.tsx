@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import Web3 from "web3";
+import { Contract } from "web3-eth-contract"; // ✅ import Contract type
 import {
   briVaultABI,
   briVaultAddress,
@@ -9,13 +10,10 @@ import {
   USDCtokenABI,
 } from "@/briVaultAbi/briVaultABI";
 
-// Correct type for contract instance
-type Web3ContractInstance = ReturnType<Web3["eth"]["Contract"]>;
-
 interface Web3ContextType {
   web3: Web3 | null;
-  briVaultContract: Web3ContractInstance | null;
-  USDCtokenContract: Web3ContractInstance | null;
+  briVaultContract: Contract | null;      // ✅ use Contract type
+  USDCtokenContract: Contract | null;     // ✅ use Contract type
   walletAddress: string | null;
   connectWallet: () => Promise<void>;
 }
@@ -24,8 +22,8 @@ const Web3Context = createContext<Web3ContextType | null>(null);
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   const [web3, setWeb3] = useState<Web3 | null>(null);
-  const [briVaultContract, setBriVaultContract] = useState<Web3ContractInstance | null>(null);
-  const [USDCtokenContract, setUSDCtokenContract] = useState<Web3ContractInstance | null>(null);
+  const [briVaultContract, setBriVaultContract] = useState<Contract | null>(null);
+  const [USDCtokenContract, setUSDCtokenContract] = useState<Contract | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   const connectWallet = async () => {
@@ -40,7 +38,6 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
       const accounts = await (window as any).ethereum.request({ method: "eth_requestAccounts" });
       const account = accounts[0];
 
-      // Create contract instances
       const briVaultInstance = new web3Instance.eth.Contract(briVaultABI, briVaultAddress);
       const usdcInstance = new web3Instance.eth.Contract(USDCtokenABI, USDCtokenAddress);
 
