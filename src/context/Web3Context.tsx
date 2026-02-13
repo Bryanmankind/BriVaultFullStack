@@ -9,13 +9,13 @@ import {
   USDCtokenABI,
 } from "@/briVaultAbi/briVaultABI";
 
-// Proper Web3 contract type
-type Web3Contract = Web3["eth"]["Contract"];
+// Correct type for contract instance
+type Web3ContractInstance = ReturnType<Web3["eth"]["Contract"]>;
 
 interface Web3ContextType {
   web3: Web3 | null;
-  briVaultContract: Web3Contract | null;
-  USDCtokenContract: Web3Contract | null;
+  briVaultContract: Web3ContractInstance | null;
+  USDCtokenContract: Web3ContractInstance | null;
   walletAddress: string | null;
   connectWallet: () => Promise<void>;
 }
@@ -24,10 +24,8 @@ const Web3Context = createContext<Web3ContextType | null>(null);
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   const [web3, setWeb3] = useState<Web3 | null>(null);
-  const [briVaultContract, setBriVaultContract] =
-    useState<Web3Contract | null>(null);
-  const [USDCtokenContract, setUSDCtokenContract] =
-    useState<Web3Contract | null>(null);
+  const [briVaultContract, setBriVaultContract] = useState<Web3ContractInstance | null>(null);
+  const [USDCtokenContract, setUSDCtokenContract] = useState<Web3ContractInstance | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   const connectWallet = async () => {
@@ -39,23 +37,12 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     try {
       const web3Instance = new Web3((window as any).ethereum);
 
-      const accounts = await (window as any).ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
+      const accounts = await (window as any).ethereum.request({ method: "eth_requestAccounts" });
       const account = accounts[0];
 
-      // BriVault contract instance
-      const briVaultInstance = new web3Instance.eth.Contract(
-        briVaultABI as any,
-        briVaultAddress
-      );
-
-      // USDC contract instance
-      const usdcInstance = new web3Instance.eth.Contract(
-        USDCtokenABI as any,
-        USDCtokenAddress
-      );
+      // Create contract instances
+      const briVaultInstance = new web3Instance.eth.Contract(briVaultABI, briVaultAddress);
+      const usdcInstance = new web3Instance.eth.Contract(USDCtokenABI, USDCtokenAddress);
 
       setWeb3(web3Instance);
       setWalletAddress(account);
@@ -68,50 +55,25 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Auto reconnect + listeners
   useEffect(() => {
-    if (!(window as any).ethereum) return;
+    if ((window as any).ethereum) {
+      (window as any).ethereum
+        .request({ method: "eth_accounts" })
+        .then((accounts: string[]) => {
+          if (accounts.length > 0) connectWallet();
+        });
 
-    const ethereum = (window as any).ethereum;
-
-    ethereum
-      .request({ method: "eth_accounts" })
-      .then((accounts: string[]) => {
-        if (accounts.length > 0) connectWallet();
+      (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
+        if (accounts.length > 0) setWalletAddress(accounts[0]);
+        else setWalletAddress(null);
       });
 
-    // Account change listener
-    ethereum.on("accountsChanged", (accounts: string[]) => {
-      if (accounts.length > 0) {
-        setWalletAddress(accounts[0]);
-      } else {
-        setWalletAddress(null);
-      }
-    });
-
-    // Network change listener
-    ethereum.on("chainChanged", () => {
-      window.location.reload();
-    });
-
-    return () => {
-      if (ethereum.removeListener) {
-        ethereum.removeListener("accountsChanged", () => {});
-        ethereum.removeListener("chainChanged", () => {});
-      }
-    };
+      (window as any).ethereum.on("chainChanged", () => window.location.reload());
+    }
   }, []);
 
   return (
-    <Web3Context.Provider
-      value={{
-        web3,
-        briVaultContract,
-        USDCtokenContract,
-        walletAddress,
-        connectWallet,
-      }}
-    >
+    <Web3Context.Provider value={{ web3, briVaultContract, USDCtokenContract, walletAddress, connectWallet }}>
       {children}
     </Web3Context.Provider>
   );
@@ -119,8 +81,6 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
 
 export const useWeb3 = () => {
   const context = useContext(Web3Context);
-  if (!context) {
-    throw new Error("useWeb3 must be used within Web3Provider");
-  }
+  if (!context) throw new Error("useWeb3 must be used within Web3Provider");
   return context;
 };
