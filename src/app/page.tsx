@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import WalletConnect from "@/components/walletconnect";
 import { useWeb3 } from "@/context/Web3Context";
-import { formatSeconds } from '../utils/formatHelpers';
 
 import { Globe, Trophy, Users, Coins, Timer } from "lucide-react";
 import Link from "next/link";
