@@ -38,6 +38,9 @@ importers:
       web3:
         specifier: ^4.16.0
         version: 4.16.0(typescript@5.9.3)(zod@3.25.76)
+      web3-eth-contract:
+        specifier: ^4.7.2
+        version: 4.7.2(typescript@5.9.3)(zod@3.25.76)
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4
