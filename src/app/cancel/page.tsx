@@ -18,7 +18,6 @@ export default function CancelPage() {
     try {
       setLoading(true);
 
-      // ✅ Now TypeScript recognizes .methods
       await briVaultContract.methods.cancelParticipation().send({ from: walletAddress });
 
       alert("Participation cancelled successfully ❌");
@@ -33,7 +32,7 @@ export default function CancelPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white flex items-center justify-center px-6">
       <Card className="max-w-md w-full bg-zinc-900 border-zinc-800">
-        <CardContent className="p-6">
+        <CardContent className="p-6 flex flex-col items-center">
           <h1 className="text-3xl font-bold text-center mb-6 text-white">
             Cancel Participation
           </h1>
@@ -46,7 +45,7 @@ export default function CancelPage() {
             size="lg"
             onClick={handleCancelParticipation}
             disabled={loading}
-            className="bg-red-500 text-white hover:bg-red-400"
+            className="bg-red-500 text-white hover:bg-red-400 w-full max-w-xs"
           >
             {loading ? "Processing..." : "Cancel Participation"}
           </Button>
