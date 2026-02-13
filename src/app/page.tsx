@@ -71,7 +71,8 @@ useEffect(() => {
     };
 
       const tvl = await briVaultContract.methods.totalAssets().call();
-      const tvlFormatted = web3.utils.fromWei(tvl as string, "ether");
+      const tvlString = String(tvl);
+      const tvlFormatted = web3.utils.fromWei(tvlString, "ether");
 
       // Participants
       const participantsCount = await briVaultContract.methods.numberOfParticipants().call();
