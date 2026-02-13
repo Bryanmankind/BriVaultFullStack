@@ -12,8 +12,8 @@ import {
 
 interface Web3ContextType {
   web3: Web3 | null;
-  briVaultContract: Contract | null;
-  USDCtokenContract: Contract | null;
+  briVaultContract: Contract<any> | null;     
+  USDCtokenContract: Contract<any> | null;    
   walletAddress: string | null;
   connectWallet: () => Promise<void>;
 }
