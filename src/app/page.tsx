@@ -80,7 +80,6 @@ useEffect(() => {
 
       // Update state
       setTeamsCount(teamsNumber.toString());
-      setEventDate(eventDate);
       setTVLvalue(tvlFormatted);
       setParticipants(participantsCount.toString());
       setGetWinner(winnerSet);
