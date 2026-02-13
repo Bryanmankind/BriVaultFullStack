@@ -20,13 +20,19 @@ export default function CancelPage() {
 
       await briVaultContract.methods
         .cancelParticipation()
-        .send({ from: walletAddress });
+        .send({
+          from: walletAddress,
+        });
 
       alert("Participation cancelled successfully ❌");
+    } catch (error: unknown) {
+      console.error(error);
 
-    } catch (err: any) {
-      console.error(err);
-      alert(err?.message || "Cancellation failed");
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Cancellation failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -49,8 +55,8 @@ export default function CancelPage() {
             <Button
               size="lg"
               onClick={handleCancelParticipation}
-              disabled={loading}
-              className="bg-red-500 text-white hover:bg-red-400"
+              disabled={loading || !walletAddress}
+              className="bg-red-500 text-white hover:bg-red-400 disabled:opacity-50"
             >
               {loading ? "Processing..." : "Cancel Participation"}
             </Button>
