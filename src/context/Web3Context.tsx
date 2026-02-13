@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import Web3 from "web3";
-import { Contract } from "web3-eth-contract";
 import {
   briVaultABI,
   briVaultAddress,
