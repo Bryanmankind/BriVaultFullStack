@@ -18,10 +18,8 @@ export default function CancelPage() {
     try {
       setLoading(true);
 
-      // ✅ This now works because briVaultContract is properly typed
-      await briVaultContract.methods
-        .cancelParticipation()
-        .send({ from: walletAddress });
+      // ✅ Now TypeScript recognizes .methods
+      await briVaultContract.methods.cancelParticipation().send({ from: walletAddress });
 
       alert("Participation cancelled successfully ❌");
     } catch (err: any) {
@@ -40,20 +38,18 @@ export default function CancelPage() {
             Cancel Participation
           </h1>
 
-          <div className="flex flex-col gap-4">
-            <p className="text-zinc-400 text-center">
-              You can withdraw your stake before the event starts. This action cannot be undone.
-            </p>
+          <p className="text-zinc-400 text-center mb-6">
+            You can withdraw your stake before the event starts. This action cannot be undone.
+          </p>
 
-            <Button
-              size="lg"
-              onClick={handleCancelParticipation}
-              disabled={loading}
-              className="bg-red-500 text-white hover:bg-red-400"
-            >
-              {loading ? "Processing..." : "Cancel Participation"}
-            </Button>
-          </div>
+          <Button
+            size="lg"
+            onClick={handleCancelParticipation}
+            disabled={loading}
+            className="bg-red-500 text-white hover:bg-red-400"
+          >
+            {loading ? "Processing..." : "Cancel Participation"}
+          </Button>
         </CardContent>
       </Card>
     </div>
