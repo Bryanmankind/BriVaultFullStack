@@ -22,7 +22,7 @@ const Web3Context = createContext<Web3ContextType | null>(null);
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   const [web3, setWeb3] = useState<Web3 | null>(null);
-  const [briVaultContract, setBriVaultContract] = useState<Contract | null>(null);
+  const [briVaultContract, setBriVaultContract] = useState<Contract<any> | null>(null);
   const [USDCtokenContract, setUSDCtokenContract] = useState<Contract | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
