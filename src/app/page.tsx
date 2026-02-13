@@ -80,9 +80,9 @@ useEffect(() => {
       const winnerSet = await briVaultContract.methods._setWinner().call();
 
       // Update state
-      setTeamsCount(teamsNumber.toString());
+      setTeamsCount(String(teamsNumber));
       setTVLvalue(tvlFormatted);
-      setParticipants(participantsCount.toString());
+      setParticipants(String(participantsCount));
       setGetWinner(winnerSet);
 
     } catch (error) {
