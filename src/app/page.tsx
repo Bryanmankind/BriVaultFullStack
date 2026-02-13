@@ -35,6 +35,14 @@ export default function Home() {
   const [eventLabel, setEventLabel] = useState("Event Starts In");
   const [eventCountdown, setEventCountdown] = useState("0d 0h 0m");
 
+  function formatSeconds(sec: number) {
+  const days = Math.floor(sec / 86400);
+  const hours = Math.floor((sec % 86400) / 3600);
+  const minutes = Math.floor((sec % 3600) / 60);
+
+  return `${days}d ${hours}h ${minutes}m`;
+  }
+
 useEffect(() => {
   const fetchValues = async () => {
     if (!briVaultContract || !web3) return;
