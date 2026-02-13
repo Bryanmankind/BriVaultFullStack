@@ -11,11 +11,12 @@ import {
 
 interface Web3ContextType {
   web3: Web3 | null;
-  briVaultContract: Contract | null;
-  USDCtokenContract: Contract | null;
+  briVaultContract: Web3["eth"]["Contract"] | null;
+  USDCtokenContract: Web3["eth"]["Contract"] | null;
   walletAddress: string | null;
   connectWallet: () => Promise<void>;
 }
+
 
 const Web3Context = createContext<Web3ContextType | null>(null);
 
