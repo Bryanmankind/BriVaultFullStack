@@ -9,23 +9,25 @@ import {
   USDCtokenABI,
 } from "@/briVaultAbi/briVaultABI";
 
+// Proper Web3 contract type
 type Web3Contract = Web3["eth"]["Contract"];
 
 interface Web3ContextType {
   web3: Web3 | null;
-  briVaultContract: Web3["eth"]["Contract"] | null;
-  USDCtokenContract: Web3["eth"]["Contract"] | null;
+  briVaultContract: Web3Contract | null;
+  USDCtokenContract: Web3Contract | null;
   walletAddress: string | null;
   connectWallet: () => Promise<void>;
 }
-
 
 const Web3Context = createContext<Web3ContextType | null>(null);
 
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   const [web3, setWeb3] = useState<Web3 | null>(null);
-  const [briVaultContract, setBriVaultContract] = useState<Contract | null>(null);
-  const [USDCtokenContract, setUSDCtokenContract] = useState<Contract | null>(null);
+  const [briVaultContract, setBriVaultContract] =
+    useState<Web3Contract | null>(null);
+  const [USDCtokenContract, setUSDCtokenContract] =
+    useState<Web3Contract | null>(null);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   const connectWallet = async () => {
@@ -43,15 +45,15 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
 
       const account = accounts[0];
 
-      // BriVault contract
+      // BriVault contract instance
       const briVaultInstance = new web3Instance.eth.Contract(
-        briVaultABI,
+        briVaultABI as any,
         briVaultAddress
       );
 
-      // USDC contract
+      // USDC contract instance
       const usdcInstance = new web3Instance.eth.Contract(
-        USDCtokenABI,
+        USDCtokenABI as any,
         USDCtokenAddress
       );
 
@@ -66,29 +68,38 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Auto reconnect
+  // Auto reconnect + listeners
   useEffect(() => {
-    if ((window as any).ethereum) {
-      (window as any).ethereum
-        .request({ method: "eth_accounts" })
-        .then((accounts: string[]) => {
-          if (accounts.length > 0) connectWallet();
-        });
+    if (!(window as any).ethereum) return;
 
-      // Handle account change
-      (window as any).ethereum.on("accountsChanged", (accounts: string[]) => {
-        if (accounts.length > 0) {
-          setWalletAddress(accounts[0]);
-        } else {
-          setWalletAddress(null);
-        }
+    const ethereum = (window as any).ethereum;
+
+    ethereum
+      .request({ method: "eth_accounts" })
+      .then((accounts: string[]) => {
+        if (accounts.length > 0) connectWallet();
       });
 
-      // Handle network change
-      (window as any).ethereum.on("chainChanged", () => {
-        window.location.reload();
-      });
-    }
+    // Account change listener
+    ethereum.on("accountsChanged", (accounts: string[]) => {
+      if (accounts.length > 0) {
+        setWalletAddress(accounts[0]);
+      } else {
+        setWalletAddress(null);
+      }
+    });
+
+    // Network change listener
+    ethereum.on("chainChanged", () => {
+      window.location.reload();
+    });
+
+    return () => {
+      if (ethereum.removeListener) {
+        ethereum.removeListener("accountsChanged", () => {});
+        ethereum.removeListener("chainChanged", () => {});
+      }
+    };
   }, []);
 
   return (
