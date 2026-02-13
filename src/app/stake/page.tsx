@@ -33,13 +33,13 @@ export default function StakePage() {
         .allowance(walletAddress, briVaultContract.options.address)
         .call();
 
-      if (BigInt(allowance) < BigInt(amountInWei)) {
+      if (BigInt(String(allowance)) < BigInt(amountInWei)) {
         await USDCtokenContract.methods
           .approve(briVaultContract.options.address, amountInWei)
           .send({ from: walletAddress });
       }
 
-      const hasJoined = await briVaultContract.methods
+      const hasJoined: boolean = await briVaultContract.methods
         .joined(walletAddress)
         .call();
 
