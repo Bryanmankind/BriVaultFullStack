@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useWeb3 } from "@/context/Web3Context";
@@ -18,21 +18,15 @@ export default function CancelPage() {
     try {
       setLoading(true);
 
+      // ✅ This now works because briVaultContract is properly typed
       await briVaultContract.methods
         .cancelParticipation()
-        .send({
-          from: walletAddress,
-        });
+        .send({ from: walletAddress });
 
       alert("Participation cancelled successfully ❌");
-    } catch (error: unknown) {
-      console.error(error);
-
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert("Cancellation failed");
-      }
+    } catch (err: any) {
+      console.error(err);
+      alert(err?.message || "Cancellation failed");
     } finally {
       setLoading(false);
     }
@@ -48,15 +42,14 @@ export default function CancelPage() {
 
           <div className="flex flex-col gap-4">
             <p className="text-zinc-400 text-center">
-              You can withdraw your stake before the event starts.
-              This action cannot be undone.
+              You can withdraw your stake before the event starts. This action cannot be undone.
             </p>
 
             <Button
               size="lg"
               onClick={handleCancelParticipation}
-              disabled={loading || !walletAddress}
-              className="bg-red-500 text-white hover:bg-red-400 disabled:opacity-50"
+              disabled={loading}
+              className="bg-red-500 text-white hover:bg-red-400"
             >
               {loading ? "Processing..." : "Cancel Participation"}
             </Button>
