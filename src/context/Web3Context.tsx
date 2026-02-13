@@ -9,6 +9,8 @@ import {
   USDCtokenABI,
 } from "@/briVaultAbi/briVaultABI";
 
+type Web3Contract = Web3["eth"]["Contract"];
+
 interface Web3ContextType {
   web3: Web3 | null;
   briVaultContract: Web3["eth"]["Contract"] | null;
