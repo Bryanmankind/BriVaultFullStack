@@ -31,7 +31,7 @@ export default function Home() {
   const [teamsCount, setTeamsCount] = useState<string>("");
   const [TVLvalue, setTVLvalue] = useState<string>("");
   const [participants, setParticipants] = useState<string>("");
-  const [getWinner, setGetWinner] = useState<string>("");
+  const [getWinner, setGetWinner] = useState<boolean>(false);
   const [eventLabel, setEventLabel] = useState("Event Starts In");
   const [eventCountdown, setEventCountdown] = useState("0d 0h 0m");
 
@@ -77,7 +77,7 @@ useEffect(() => {
       // Participants
       const participantsCount = await briVaultContract.methods.numberOfParticipants().call();
 
-      const winnerSet = await briVaultContract.methods._setWinner().call();
+      const winnerSet: boolean = await briVaultContract.methods._setWinner().call();
 
       // Update state
       setTeamsCount(String(teamsNumber));
