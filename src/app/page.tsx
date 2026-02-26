@@ -47,12 +47,15 @@ useEffect(() => {
   const fetchValues = async () => {
     if (!briVaultContract || !web3) return;
 
+    let interval: NodeJS.Timeout;
+
     try {
       const teamsNumber = await briVaultContract.methods.getTeamsLength().call();
 
       const start = Number(await briVaultContract.methods.eventStartDate().call());
-      const end = Number(await briVaultContract.methods.eventEndDate().call());
+      console.log(start);
 
+      const end = Number(await briVaultContract.methods.eventEndDate().call());
      const updateCountdown = () => {
       const now = Math.floor(Date.now() / 1000);
 
@@ -69,6 +72,8 @@ useEffect(() => {
         setEventCountdown("0d 0h 0m");
       }
     };
+      updateCountdown();
+      interval = setInterval(updateCountdown, 1000);
 
       const tvl = await briVaultContract.methods.totalAssets().call();
       const tvlString = String(tvl);

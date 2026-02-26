@@ -20,7 +20,7 @@ export default function CancelPage() {
 
       await briVaultContract.methods.cancelParticipation().send({ from: walletAddress });
 
-      alert("Participation cancelled successfully ❌");
+      alert("Participation cancelled successfully.");
     } catch (err: any) {
       console.error(err);
       alert(err?.message || "Cancellation failed");
@@ -38,7 +38,7 @@ export default function CancelPage() {
           </h1>
 
           <p className="text-zinc-400 text-center mb-6">
-            You can withdraw your stake before the event starts. This action cannot be undone.
+            You can withdraw your stake before picking a team. This action cannot be undone.
           </p>
 
           <Button
